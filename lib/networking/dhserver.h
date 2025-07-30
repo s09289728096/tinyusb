@@ -60,6 +60,7 @@ typedef struct dhcp_config
 extern "C" {
 #endif
 err_t dhserv_init(const dhcp_config_t *c);
+err_t dhserv_init_netif(const dhcp_config_t *c, struct netif *netif);
 void dhserv_free(void);
 #ifdef __cplusplus
 }

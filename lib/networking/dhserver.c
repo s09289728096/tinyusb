@@ -408,6 +408,32 @@ err_t dhserv_init(const dhcp_config_t *c)
 	return ERR_OK;
 }
 
+err_t dhserv_init_netif(const dhcp_config_t *c, struct netif *netif)
+		{
+		err_t err;
+		udp_init();
+		dhserv_free();
+		pcb = udp_new();
+		if (pcb == NULL)
+				return ERR_MEM;
+
+		/* Bind to specific netif IP address instead of any address */
+		if (netif != NULL) {
+				err = udp_bind(pcb, netif_ip4_addr(netif), c->port);
+		} else {
+				err = udp_bind(pcb, IP_ADDR_ANY, c->port);
+		}
+
+		if (err != ERR_OK)
+		{
+				dhserv_free();
+				return err;
+		}
+		udp_recv(pcb, udp_recv_proc, NULL);
+		config = c;
+		return ERR_OK;
+}
+
 void dhserv_free(void)
 {
 	if (pcb == NULL) return;
